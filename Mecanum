@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+
+import wpilib
+from wpilib import RobotDrive
+
+class MyRobot(wpilib.iterativeRobot):
+
+    frontLeftChannel  = 2
+    rearLeftChannel   = 3
+    frontRightChannel = 1
+    rearRightChannel  = 0
+
+
+    joystickChannel   = 0;
+
+    def robotInit(self):
+        '''Robot initialization function'''
+
+
+        self.robotDrive = wpilib.RobotDrive(self.frontLeftChannel,
+                                           self.rearLeftChannel,
+                                           self.frontRightChannel,
+                                           self.rearRightChannel)
+        self.robotDrive.setExpiration(0.1)
+
+        self.robotDrive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, True)
+
+        self.robotDrive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, True)#maybe
+
+    def operatorControl(self):
+        '''Runs the motors with Mecanum drive.'''
+
+        self.robotDrive.setSafetyEnabled(True)
+        while self.isOperatorControl() and self.isEnabled():
+
+            #Use the joystick X axis for lateral movement, Y axis for forward movement, and Z for rotation
+            #NO field-oriented, gyro set to 0
+            self.robotDrive.mecanumDrive_Cartesian(self.stick.getX(),
+                                                   self.stick.getY(),
+                                                   self.stick.getZ(), 5);
+
+            wpilib.Timer.delay(0.005)
+
+if __name__ == '__main__':
+    wpilib.run(MyRobot)
+            
