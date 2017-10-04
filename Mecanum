@@ -3,7 +3,7 @@
 import wpilib
 from wpilib import RobotDrive
 
-class MyRobot(wpilib.iterativeRobot):
+class MyRobot(wpilib.IterativeRobot):
 
     frontLeftChannel  = 2
     rearLeftChannel   = 3
@@ -11,10 +11,11 @@ class MyRobot(wpilib.iterativeRobot):
     rearRightChannel  = 0
 
 
-    joystickChannel   = 0;
+    joystickChannel   = 0
 
     def robotInit(self):
         '''Robot initialization function'''
+        self.stick = wpilib.Joystick(self.joystickChannel)
 
 
         self.robotDrive = wpilib.RobotDrive(self.frontLeftChannel,
@@ -25,22 +26,17 @@ class MyRobot(wpilib.iterativeRobot):
 
         self.robotDrive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, True)
 
-        self.robotDrive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, True)#maybe
+        self.robotDrive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, True)
 
-    def operatorControl(self):
-        '''Runs the motors with Mecanum drive.'''
+    def teleopPeriodic(self):
 
-        self.robotDrive.setSafetyEnabled(True)
-        while self.isOperatorControl() and self.isEnabled():
 
-            #Use the joystick X axis for lateral movement, Y axis for forward movement, and Z for rotation
-            #NO field-oriented, gyro set to 0
-            self.robotDrive.mecanumDrive_Cartesian(self.stick.getX(),
+        self.robotDrive.mecanumDrive_Cartesian(self.stick.getX(),
                                                    self.stick.getY(),
-                                                   self.stick.getZ(), 5);
+                                                   self.stick.getRawAxis(4), 0)
 
-            wpilib.Timer.delay(0.005)
 
 if __name__ == '__main__':
     wpilib.run(MyRobot)
-            
+
+
